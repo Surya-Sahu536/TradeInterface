@@ -22,7 +22,6 @@ import { PortfolioComponent } from './features/portfolio/portfolio.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { StockDetailComponent } from './features/stocks/stock-detail.component';
 import { CommonModule } from '@angular/common';
-import { AdminStocksComponent } from './admin-stocks/admin-stocks.component';
 
 
 @NgModule({
@@ -31,7 +30,6 @@ import { AdminStocksComponent } from './admin-stocks/admin-stocks.component';
     PortfolioComponent,
     DashboardComponent,
     StockDetailComponent,
-    AdminStocksComponent
   ],
   imports: [
     BrowserModule,
