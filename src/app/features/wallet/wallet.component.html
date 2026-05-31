@@ -1,0 +1,129 @@
+<app-navbar></app-navbar>
+
+<div class="wallet-page">
+
+  <!-- Toast -->
+  <div class="toast" *ngIf="toastMessage" [class.toast-error]="toastType==='error'" [class.toast-success]="toastType==='success'">
+    <span>{{ toastType === 'error' ? '⚠️' : '✅' }}</span>
+    <span class="toast-text">{{ toastMessage }}</span>
+    <button (click)="toastMessage=''">✕</button>
+  </div>
+
+  <div class="page-header">
+    <h2>💰 Wallet</h2>
+    <p class="subtitle">Manage your virtual trading balance</p>
+  </div>
+
+  <!-- Balance Card -->
+  <div class="balance-card" *ngIf="walletData">
+    <div class="balance-main">
+      <div class="balance-label">Available Balance</div>
+      <div class="balance-amount">₹{{ walletData.walletBalance | number:'1.2-2' }}</div>
+    </div>
+    <div class="balance-stats">
+      <div class="bstat">
+        <span class="bstat-label">Total Deposited</span>
+        <span class="bstat-val green">+₹{{ walletData.totalDeposited | number:'1.2-2' }}</span>
+      </div>
+      <div class="bstat-divider"></div>
+      <div class="bstat">
+        <span class="bstat-label">Total Withdrawn</span>
+        <span class="bstat-val red">-₹{{ walletData.totalWithdrawn | number:'1.2-2' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="actions-grid">
+
+    <!-- Deposit -->
+    <div class="action-card deposit-card">
+      <div class="action-header">
+        <span class="action-icon">⬇️</span>
+        <h3>Add Money</h3>
+      </div>
+      <div class="quick-amounts">
+        <button *ngFor="let amt of quickAmounts" class="quick-btn" (click)="setAmount('deposit', amt)">
+          ₹{{ amt | number }}
+        </button>
+      </div>
+      <div class="form-group">
+        <label>Custom Amount (₹)</label>
+        <input type="number" [(ngModel)]="depositAmount" placeholder="Enter amount" min="1" max="1000000" />
+      </div>
+      <div class="form-group">
+        <label>Note (optional)</label>
+        <input type="text" [(ngModel)]="depositNote" placeholder="e.g. Monthly top-up" maxlength="100" />
+      </div>
+      <button class="btn-action btn-deposit" (click)="deposit()" [disabled]="loading || !depositAmount">
+        {{ loading ? 'Processing...' : 'Add ₹' + (depositAmount | number) + ' to Wallet' }}
+      </button>
+    </div>
+
+    <!-- Withdraw -->
+    <div class="action-card withdraw-card">
+      <div class="action-header">
+        <span class="action-icon">⬆️</span>
+        <h3>Withdraw Money</h3>
+      </div>
+      <div class="quick-amounts">
+        <button *ngFor="let amt of quickAmounts" class="quick-btn withdraw-quick" (click)="setAmount('withdraw', amt)">
+          ₹{{ amt | number }}
+        </button>
+      </div>
+      <div class="form-group">
+        <label>Custom Amount (₹)</label>
+        <input type="number" [(ngModel)]="withdrawAmount" placeholder="Enter amount" min="1" />
+      </div>
+      <div class="form-group">
+        <label>Note (optional)</label>
+        <input type="text" [(ngModel)]="withdrawNote" placeholder="e.g. Profit booking" maxlength="100" />
+      </div>
+      <div class="available-hint" *ngIf="walletData">
+        Available: <strong>₹{{ walletData.walletBalance | number:'1.2-2' }}</strong>
+        <a (click)="withdrawAll()">Withdraw all</a>
+      </div>
+      <button class="btn-action btn-withdraw" (click)="withdraw()" [disabled]="loading || !withdrawAmount">
+        {{ loading ? 'Processing...' : 'Withdraw ₹' + (withdrawAmount | number) }}
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Transaction History -->
+  <div class="history-section" *ngIf="walletData">
+    <h3>Transaction History</h3>
+    <div class="table-container" *ngIf="walletData.history.length; else noHistory">
+      <table>
+        <thead>
+          <tr>
+            <th>Date & Time</th>
+            <th>Type</th>
+            <th>Note</th>
+            <th class="right">Amount</th>
+            <th class="right">Balance After</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tx of walletData.history">
+            <td class="muted">{{ tx.createdAt | date:'dd MMM yyyy, HH:mm' }}</td>
+            <td>
+              <span [class]="tx.type === 'DEPOSIT' ? 'badge-deposit' : 'badge-withdraw'">
+                {{ tx.type === 'DEPOSIT' ? '⬇ Deposit' : '⬆ Withdraw' }}
+              </span>
+            </td>
+            <td class="note-col">{{ tx.note }}</td>
+            <td class="right mono" [class.green]="tx.type === 'DEPOSIT'" [class.red]="tx.type === 'WITHDRAW'">
+              {{ tx.type === 'DEPOSIT' ? '+' : '-' }}₹{{ tx.amount | number:'1.2-2' }}
+            </td>
+            <td class="right mono muted">₹{{ tx.balanceAfter | number:'1.2-2' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #noHistory>
+      <div class="empty">No transactions yet. Add some money to get started!</div>
+    </ng-template>
+  </div>
+
+</div>

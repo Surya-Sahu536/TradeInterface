@@ -1,0 +1,133 @@
+.portfolio-page {
+  padding: 24px 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h2 { color: #e0e6f0; font-size: 22px; margin: 0 0 24px; }
+h3 { color: #c8d3e6; font-size: 16px; margin: 0 0 16px; }
+
+.section { margin-bottom: 32px; }
+
+/* Summary cards */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.summary-card {
+  background: #0f1629;
+  border: 1px solid #1e2d4a;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.s-label {
+  color: #6b7a99;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.s-val {
+  font-size: 20px;
+  font-weight: 700;
+  color: #e0e6f0;
+  font-family: monospace;
+}
+
+.green { color: #00d4aa !important; }
+.red   { color: #f56565 !important; }
+
+/* Tables */
+.table-container {
+  background: #0f1629;
+  border: 1px solid #1e2d4a;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+table { width: 100%; border-collapse: collapse; }
+
+thead tr { background: #1a2540; }
+
+th {
+  padding: 12px 16px;
+  color: #6b7a99;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  text-align: left;
+  border-bottom: 1px solid #1e2d4a;
+}
+
+td {
+  padding: 13px 16px;
+  border-bottom: 1px solid #111827;
+  color: #c8d3e6;
+  font-size: 14px;
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+.right  { text-align: right; }
+.center { text-align: center; }
+
+.sym {
+  color: #00d4aa;
+  font-weight: 700;
+  font-family: monospace;
+}
+
+.mono { font-family: monospace; }
+.muted { color: #6b7a99; font-size: 13px; }
+.company-name { color: #e0e6f0; }
+
+.pnl-up  { color: #00d4aa; font-weight: 600; font-family: monospace; }
+.pnl-down { color: #f56565; font-weight: 600; font-family: monospace; }
+
+.badge-buy {
+  background: rgba(0, 212, 170, 0.15);
+  color: #00d4aa;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.badge-sell {
+  background: rgba(245, 101, 101, 0.15);
+  color: #f56565;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.btn-trade {
+  border: 1px solid #00d4aa;
+  color: #00d4aa;
+  padding: 4px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btn-trade:hover { background: #00d4aa; color: #0a0e1a; }
+
+.empty {
+  color: #6b7a99;
+  padding: 32px;
+  text-align: center;
+  background: #0f1629;
+  border: 1px solid #1e2d4a;
+  border-radius: 12px;
+}
+
+.empty a { color: #00d4aa; text-decoration: none; }

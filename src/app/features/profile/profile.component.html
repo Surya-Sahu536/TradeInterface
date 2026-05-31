@@ -1,0 +1,146 @@
+<app-navbar></app-navbar>
+
+<div class="profile-page">
+
+  <!-- Toast -->
+  <div class="toast" *ngIf="toastMessage" [class.toast-error]="toastType==='error'" [class.toast-success]="toastType==='success'">
+    <span>{{ toastType === 'error' ? '⚠️' : '✅' }}</span>
+    <span class="toast-text">{{ toastMessage }}</span>
+    <button (click)="toastMessage=''">✕</button>
+  </div>
+
+  <div class="page-header">
+    <h2>👤 My Profile</h2>
+    <p class="subtitle">Manage your account details</p>
+  </div>
+
+  <div class="profile-grid" *ngIf="profile">
+
+    <!-- Left: Avatar + Stats -->
+    <div class="left-col">
+
+      <div class="avatar-card">
+        <div class="avatar">{{ getInitials() }}</div>
+        <div class="avatar-name">{{ profile.fullName }}</div>
+        <div class="avatar-email">{{ profile.email }}</div>
+        <div class="member-since">Member since {{ profile.memberSince | date:'MMM yyyy' }}</div>
+      </div>
+
+      <div class="stats-card">
+        <div class="stats-title">Trading Stats</div>
+        <div class="stat-row">
+          <span class="stat-label">Total Trades</span>
+          <span class="stat-val">{{ profile.stats.totalTrades }}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Buy Orders</span>
+          <span class="stat-val green">{{ profile.stats.totalBuys }}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Sell Orders</span>
+          <span class="stat-val red">{{ profile.stats.totalSells }}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Stocks Held</span>
+          <span class="stat-val">{{ profile.stats.holdingsCount }}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Wallet Balance</span>
+          <span class="stat-val green">₹{{ profile.walletBalance | number:'1.2-2' }}</span>
+        </div>
+      </div>
+
+      <div class="quick-links">
+        <a routerLink="/portfolio" class="quick-link">📊 My Portfolio</a>
+        <a routerLink="/wallet" class="quick-link">💰 Wallet</a>
+        <a routerLink="/dashboard" class="quick-link">📈 Market</a>
+      </div>
+
+    </div>
+
+    <!-- Right: Edit Forms -->
+    <div class="right-col">
+
+      <!-- Edit Name -->
+      <div class="form-card">
+        <div class="form-card-header">
+          <h3>Personal Information</h3>
+        </div>
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" [(ngModel)]="editName" placeholder="Your full name" />
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" [value]="profile.email" disabled class="input-disabled" />
+          <span class="hint">Email cannot be changed</span>
+        </div>
+        <button class="btn-save" (click)="updateProfile()" [disabled]="saving || !editName.trim()">
+          {{ saving ? 'Saving...' : 'Save Changes' }}
+        </button>
+      </div>
+
+      <!-- Change Password -->
+      <div class="form-card">
+        <div class="form-card-header">
+          <h3>Change Password</h3>
+        </div>
+        <div class="form-group">
+          <label>Current Password</label>
+          <div class="input-wrap">
+            <input [type]="showCurrentPwd ? 'text' : 'password'"
+              [(ngModel)]="currentPassword" placeholder="••••••••" />
+            <button class="eye-btn" (click)="showCurrentPwd = !showCurrentPwd">
+              {{ showCurrentPwd ? '🙈' : '👁️' }}
+            </button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>New Password</label>
+          <div class="input-wrap">
+            <input [type]="showNewPwd ? 'text' : 'password'"
+              [(ngModel)]="newPassword" placeholder="Min 6 characters" />
+            <button class="eye-btn" (click)="showNewPwd = !showNewPwd">
+              {{ showNewPwd ? '🙈' : '👁️' }}
+            </button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Confirm New Password</label>
+          <div class="input-wrap">
+            <input [type]="showConfirmPwd ? 'text' : 'password'"
+              [(ngModel)]="confirmPassword" placeholder="Re-enter new password" />
+            <button class="eye-btn" (click)="showConfirmPwd = !showConfirmPwd">
+              {{ showConfirmPwd ? '🙈' : '👁️' }}
+            </button>
+          </div>
+          <span class="hint error-hint" *ngIf="newPassword && confirmPassword && newPassword !== confirmPassword">
+            Passwords do not match
+          </span>
+        </div>
+        <button class="btn-save btn-pwd"
+          (click)="changePassword()"
+          [disabled]="saving || !currentPassword || !newPassword || newPassword !== confirmPassword">
+          {{ saving ? 'Updating...' : 'Update Password' }}
+        </button>
+      </div>
+
+      <!-- Danger Zone -->
+      <div class="form-card danger-card">
+        <div class="form-card-header">
+          <h3>⚠️ Account Actions</h3>
+        </div>
+        <p class="danger-text">Sign out from all your active sessions.</p>
+        <button class="btn-logout-all" (click)="logout()">Sign Out</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  <div class="loading-state" *ngIf="!profile">
+    <div class="spinner"></div>
+    <p>Loading profile...</p>
+  </div>
+
+</div>

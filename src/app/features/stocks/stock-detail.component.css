@@ -1,0 +1,68 @@
+
+/* ── Availability ───────────────────────────────────────────── */
+.availability {
+  background: #1a2540;
+  border: 1px solid #2a3a5c;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+}
+
+.avail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.avail-label { color: #6b7a99; font-size: 12px; }
+.avail-val   { color: #c8d3e6; font-size: 12px; font-family: monospace; font-weight: 600; }
+.avail-low   { color: #f56565 !important; }
+
+.avail-bar {
+  height: 5px;
+  background: #2a3a5c;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.avail-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.fill-low  { background: #f56565; }
+.fill-mid  { background: #f6ad55; }
+.avail-fill:not(.fill-low):not(.fill-mid) { background: #00d4aa; }
+
+.avail-pct  { font-size: 11px; color: #6b7a99; }
+.avail-warn { color: #f56565; margin-left: 6px; font-weight: 600; }
+
+/* Sold-out banner */
+.soldout-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: rgba(245,101,101,0.08);
+  border: 1px solid rgba(245,101,101,0.3);
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+
+.soldout-banner span:first-child { font-size: 20px; flex-shrink: 0; }
+.soldout-banner strong { color: #f56565; display: block; margin-bottom: 4px; }
+.soldout-banner p { color: #8892a4; margin: 0; line-height: 1.4; }
+
+/* Sold-out button state */
+.btn-execute.soldout {
+  background: #2a3a5c;
+  color: #6b7a99;
+  cursor: not-allowed;
+}
+
+/* Input hint */
+.hint { display: block; color: #f56565; font-size: 11px; margin-top: 4px; }

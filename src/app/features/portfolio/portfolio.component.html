@@ -1,0 +1,111 @@
+<app-navbar></app-navbar>
+
+<div class="portfolio-page">
+  <h2>My Portfolio</h2>
+
+  <!-- Summary Cards -->
+  <div class="summary-grid" *ngIf="portfolio">
+    <div class="summary-card">
+      <div class="s-label">Wallet Balance</div>
+      <div class="s-val green">₹{{ portfolio.walletBalance | number:'1.2-2' }}</div>
+    </div>
+    <div class="summary-card">
+      <div class="s-label">Total Invested</div>
+      <div class="s-val">₹{{ portfolio.totalInvested | number:'1.2-2' }}</div>
+    </div>
+    <div class="summary-card">
+      <div class="s-label">Current Value</div>
+      <div class="s-val">₹{{ portfolio.currentValue | number:'1.2-2' }}</div>
+    </div>
+    <div class="summary-card">
+      <div class="s-label">Total P&amp;L</div>
+      <div [class]="'s-val ' + (portfolio.totalPnL >= 0 ? 'green' : 'red')">
+        {{ portfolio.totalPnL >= 0 ? '+' : '' }}₹{{ portfolio.totalPnL | number:'1.2-2' }}
+        ({{ portfolio.totalPnLPercent | number:'1.2-2' }}%)
+      </div>
+    </div>
+  </div>
+
+  <!-- Holdings -->
+  <div class="section">
+    <h3>Holdings</h3>
+    <div class="table-container" *ngIf="portfolio?.holdings?.length; else noHoldings">
+      <table>
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Company</th>
+            <th class="right">Qty</th>
+            <th class="right">Avg Buy Price</th>
+            <th class="right">Current Price</th>
+            <th class="right">Current Value</th>
+            <th class="right">P&amp;L</th>
+            <th class="center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let h of portfolio?.holdings">
+            <td><span class="sym">{{ h.symbol }}</span></td>
+            <td class="company-name">{{ h.companyName }}</td>
+            <td class="right mono">{{ h.quantity }}</td>
+            <td class="right mono">₹{{ h.averageBuyPrice | number:'1.2-2' }}</td>
+            <td class="right mono">₹{{ h.currentPrice | number:'1.2-2' }}</td>
+            <td class="right mono">₹{{ h.currentValue | number:'1.2-2' }}</td>
+            <td class="right">
+              <span [class]="h.profitLoss >= 0 ? 'pnl-up' : 'pnl-down'">
+                {{ h.profitLoss >= 0 ? '+' : '' }}₹{{ h.profitLoss | number:'1.2-2' }}<br>
+                <small>{{ h.profitLossPercent | number:'1.2-2' }}%</small>
+              </span>
+            </td>
+            <td class="center">
+              <a [routerLink]="['/stocks', h.stockId]" class="btn-trade">Trade</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #noHoldings>
+      <div class="empty">
+        No holdings yet. <a routerLink="/dashboard">Go buy some stocks →</a>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Transaction History -->
+  <div class="section">
+    <h3>Transaction History</h3>
+    <div class="table-container" *ngIf="transactions.length; else noTx">
+      <table>
+        <thead>
+          <tr>
+            <th>Date &amp; Time</th>
+            <th>Symbol</th>
+            <th>Type</th>
+            <th class="right">Qty</th>
+            <th class="right">Price/Share</th>
+            <th class="right">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tx of transactions">
+            <td class="muted">{{ tx.createdAt | date:'dd MMM yyyy, HH:mm:ss' }}</td>
+            <td><span class="sym">{{ tx.symbol }}</span></td>
+            <td>
+              <span [class]="tx.type === 'BUY' ? 'badge-buy' : 'badge-sell'">{{ tx.type }}</span>
+            </td>
+            <td class="right mono">{{ tx.quantity }}</td>
+            <td class="right mono">₹{{ tx.pricePerShare | number:'1.2-2' }}</td>
+            <td class="right mono"
+                [class.green]="tx.type === 'SELL'"
+                [class.red]="tx.type === 'BUY'">
+              {{ tx.type === 'SELL' ? '+' : '-' }}₹{{ tx.totalAmount | number:'1.2-2' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #noTx>
+      <div class="empty">No transactions yet.</div>
+    </ng-template>
+  </div>
+</div>

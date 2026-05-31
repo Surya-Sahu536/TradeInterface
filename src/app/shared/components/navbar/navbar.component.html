@@ -1,0 +1,46 @@
+<nav class="navbar">
+  <div class="brand" routerLink="/dashboard">
+    <span class="brand-icon">📈</span>
+    <span class="brand-name">TradeCenter</span>
+  </div>
+
+  <div class="nav-links">
+    <a routerLink="/dashboard"  routerLinkActive="active">Market</a>
+    <a routerLink="/portfolio"  routerLinkActive="active">Portfolio</a>
+  </div>
+
+  <div class="nav-right">
+    <!-- Wallet balance — clickable -->
+    <a routerLink="/wallet" class="wallet-btn" title="Manage Wallet">
+      💰 ₹{{ (auth.currentUser?.walletBalance ?? 0) | number:'1.2-2' }}
+    </a>
+
+    <!-- Profile dropdown -->
+    <div class="profile-menu" (click)="toggleMenu()" (clickOutside)="closeMenu()">
+      <button class="avatar-btn" title="Profile">
+        <span class="avatar-initials">{{ getInitials() }}</span>
+      </button>
+
+      <div class="dropdown" *ngIf="menuOpen">
+        <div class="dropdown-header">
+          <div class="dh-name">{{ auth.currentUser?.fullName }}</div>
+          <div class="dh-email">{{ auth.currentUser?.email }}</div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <a routerLink="/profile" class="dropdown-item" (click)="closeMenu()">
+          <span>👤</span> My Profile
+        </a>
+        <a routerLink="/wallet" class="dropdown-item" (click)="closeMenu()">
+          <span>💰</span> Wallet
+        </a>
+        <a routerLink="/portfolio" class="dropdown-item" (click)="closeMenu()">
+          <span>📊</span> Portfolio
+        </a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item logout-item" (click)="auth.logout()">
+          <span>🚪</span> Sign Out
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>

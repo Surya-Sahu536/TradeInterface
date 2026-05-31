@@ -1,0 +1,193 @@
+<app-navbar></app-navbar>
+
+<div class="dashboard">
+
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <h2>Market Overview</h2>
+      <p class="subtitle">Live prices update every 3 seconds</p>
+    </div>
+    <div class="live-badge">
+      <span class="pulse"></span> LIVE
+    </div>
+  </div>
+
+  <!-- Market Highlights -->
+  <div class="highlights-row">
+
+    <div class="highlight-card">
+      <div class="highlight-title">🔥 Top Traded Today</div>
+      <div class="highlight-items">
+        <div class="highlight-item" *ngFor="let s of topTraded">
+          <span class="hi-symbol">{{ s.symbol }}</span>
+          <span class="hi-price">₹{{ s.currentPrice | number:'1.2-2' }}</span>
+          <span class="hi-vol muted">{{ s.volume | number }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-card gainers-card">
+      <div class="highlight-title">▲ Top Gainers</div>
+      <div class="highlight-items">
+        <div class="highlight-item" *ngFor="let s of topGainers">
+          <span class="hi-symbol">{{ s.symbol }}</span>
+          <span class="hi-price">₹{{ s.currentPrice | number:'1.2-2' }}</span>
+          <span class="hi-change green">+{{ s.changePercent | number:'1.2-2' }}%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-card losers-card">
+      <div class="highlight-title">▼ Top Losers</div>
+      <div class="highlight-items">
+        <div class="highlight-item" *ngFor="let s of topLosers">
+          <span class="hi-symbol">{{ s.symbol }}</span>
+          <span class="hi-price">₹{{ s.currentPrice | number:'1.2-2' }}</span>
+          <span class="hi-change red">{{ s.changePercent | number:'1.2-2' }}%</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Filter & Search Bar -->
+  <div class="toolbar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onFilterChange()"
+        placeholder="Search symbol or company..."
+        class="search-input" />
+      <button *ngIf="searchTerm" class="clear-btn" (click)="clearSearch()">✕</button>
+    </div>
+
+    <div class="filter-group">
+      <label>Sector</label>
+      <select [(ngModel)]="selectedSector" (ngModelChange)="onFilterChange()" class="filter-select">
+        <option value="">All Sectors</option>
+        <option *ngFor="let s of sectors" [value]="s">{{ s }}</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Movement</label>
+      <select [(ngModel)]="selectedMovement" (ngModelChange)="onFilterChange()" class="filter-select">
+        <option value="">All</option>
+        <option value="gainers">Gainers Only</option>
+        <option value="losers">Losers Only</option>
+      </select>
+    </div>
+
+    <button class="btn-reset" (click)="resetFilters()" *ngIf="isFiltered">
+      Reset Filters
+    </button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th class="sortable" (click)="sortBy('symbol')">
+            Symbol <span class="sort-icon">{{ getSortIcon('symbol') }}</span>
+          </th>
+          <th class="sortable" (click)="sortBy('companyName')">
+            Company <span class="sort-icon">{{ getSortIcon('companyName') }}</span>
+          </th>
+          <th>Sector</th>
+          <th class="right sortable" (click)="sortBy('currentPrice')">
+            Price <span class="sort-icon">{{ getSortIcon('currentPrice') }}</span>
+          </th>
+          <th class="right sortable" (click)="sortBy('changePercent')">
+            Change <span class="sort-icon">{{ getSortIcon('changePercent') }}</span>
+          </th>
+          <th class="right sortable" (click)="sortBy('dayHigh')">
+            Day High <span class="sort-icon">{{ getSortIcon('dayHigh') }}</span>
+          </th>
+          <th class="right sortable" (click)="sortBy('dayLow')">
+            Day Low <span class="sort-icon">{{ getSortIcon('dayLow') }}</span>
+          </th>
+          <th class="right sortable" (click)="sortBy('volume')">
+            Volume <span class="sort-icon">{{ getSortIcon('volume') }}</span>
+          </th>
+          <th class="center">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let stock of pagedStocks"
+            [class.flash-green]="flashMap[stock.id] === 'up'"
+            [class.flash-red]="flashMap[stock.id] === 'down'">
+          <td><span class="symbol">{{ stock.symbol }}</span></td>
+          <td class="company">{{ stock.companyName }}</td>
+          <td><span class="sector-badge">{{ stock.sector }}</span></td>
+          <td class="right price">₹{{ stock.currentPrice | number:'1.2-2' }}</td>
+          <td class="right">
+            <span [class]="stock.changePercent >= 0 ? 'change-up' : 'change-down'">
+              {{ stock.changePercent >= 0 ? '▲' : '▼' }}
+              {{ stock.changePercent | number:'1.2-2' }}%
+            </span>
+          </td>
+          <td class="right muted">₹{{ stock.dayHigh | number:'1.2-2' }}</td>
+          <td class="right muted">₹{{ stock.dayLow | number:'1.2-2' }}</td>
+          <td class="right muted">{{ stock.volume | number }}</td>
+          <td class="center">
+            <a [routerLink]="['/stocks', stock.id]" class="btn-trade">Trade</a>
+          </td>
+        </tr>
+
+        <!-- Empty state -->
+        <tr *ngIf="pagedStocks.length === 0">
+          <td colspan="9" class="empty-row">
+            <span>😕 No stocks match your filters.</span>
+            <a (click)="resetFilters()">Clear filters</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="filteredStocks.length > 0">
+      <div class="page-info">
+        Showing {{ pageStart }}–{{ pageEnd }} of {{ filteredStocks.length }} stocks
+      </div>
+
+      <div class="page-controls">
+        <button class="page-btn" (click)="goToPage(1)" [disabled]="currentPage === 1" title="First">
+          «
+        </button>
+        <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1" title="Previous">
+          ‹
+        </button>
+
+        <button
+          *ngFor="let p of pageNumbers"
+          class="page-btn"
+          [class.active]="p === currentPage"
+          (click)="goToPage(p)">
+          {{ p }}
+        </button>
+
+        <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === totalPages" title="Next">
+          ›
+        </button>
+        <button class="page-btn" (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages" title="Last">
+          »
+        </button>
+      </div>
+
+      <div class="page-size">
+        <label>Rows</label>
+        <select [(ngModel)]="pageSize" (ngModelChange)="onPageSizeChange()" class="size-select">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+        </select>
+      </div>
+    </div>
+
+  </div>
+</div>

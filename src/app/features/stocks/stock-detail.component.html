@@ -1,0 +1,152 @@
+<app-navbar></app-navbar>
+
+<div class="detail-page" *ngIf="stock">
+
+  <!-- Toast Notification -->
+  <div class="toast" *ngIf="toastMessage"
+       [class.toast-error]="toastType === 'error'"
+       [class.toast-success]="toastType === 'success'">
+    <span class="toast-icon">{{ toastType === 'error' ? '⚠️' : '✅' }}</span>
+    <span class="toast-text">{{ toastMessage }}</span>
+    <button class="toast-close" (click)="toastMessage = ''">✕</button>
+  </div>
+
+  <div class="back-link">
+    <a routerLink="/dashboard">← Market</a>
+  </div>
+
+  <div class="stock-header">
+    <div>
+      <h2><span class="sym">{{ stock.symbol }}</span> {{ stock.companyName }}</h2>
+      <span class="sector-tag">{{ stock.sector }}</span>
+    </div>
+    <div class="price-block">
+      <div class="big-price">₹{{ stock.currentPrice | number:'1.2-2' }}</div>
+      <div [class]="stock.changePercent >= 0 ? 'chg up' : 'chg down'">
+        {{ stock.changePercent >= 0 ? '▲' : '▼' }}
+        {{ stock.changePercent | number:'1.2-2' }}% today
+      </div>
+    </div>
+  </div>
+
+  <div class="content-grid">
+
+    <!-- Chart -->
+    <div class="chart-card">
+      <div class="card-title">Price Chart (Last 100 ticks)</div>
+      <canvas #chartCanvas></canvas>
+    </div>
+
+    <!-- Trade Panel -->
+    <div class="trade-panel">
+      <div class="trade-tabs">
+        <button [class.active]="tradeType === 'BUY'" (click)="tradeType = 'BUY'">Buy</button>
+        <button [class.active]="tradeType === 'SELL'" (click)="tradeType = 'SELL'">Sell</button>
+      </div>
+
+      <!-- Sold-out banner -->
+      <div class="soldout-banner" *ngIf="stock.availableShares === 0 && tradeType === 'BUY'">
+        <span>🚫</span>
+        <div>
+          <strong>No shares available</strong>
+          <p>All {{ stock.totalShares | number }} shares of {{ stock.symbol }} have been purchased.
+             Wait for other users to sell.</p>
+        </div>
+      </div>
+
+      <!-- Share availability bar (only show on BUY tab) -->
+      <div class="availability" *ngIf="tradeType === 'BUY' && stock.availableShares > 0">
+        <div class="avail-row">
+          <span class="avail-label">Available Shares</span>
+          <span class="avail-val" [class.avail-low]="availabilityPercent < 20">
+            {{ stock.availableShares | number }} / {{ stock.totalShares | number }}
+          </span>
+        </div>
+        <div class="avail-bar">
+          <div class="avail-fill"
+               [class.fill-low]="availabilityPercent < 20"
+               [class.fill-mid]="availabilityPercent >= 20 && availabilityPercent < 50"
+               [style.width.%]="availabilityPercent">
+          </div>
+        </div>
+        <div class="avail-pct" [class.avail-low]="availabilityPercent < 20">
+          {{ availabilityPercent | number:'1.0-0' }}% available
+          <span class="avail-warn" *ngIf="availabilityPercent < 20">⚠️ Limited supply!</span>
+        </div>
+      </div>
+
+      <div class="trade-info">
+        <div class="info-row">
+          <span>Market Price</span>
+          <span class="val">₹{{ stock.currentPrice | number:'1.2-2' }}</span>
+        </div>
+        <div class="info-row">
+          <span>Your Balance</span>
+          <span class="val green">₹{{ (auth.currentUser?.walletBalance ?? 0) | number:'1.2-2' }}</span>
+        </div>
+        <div class="info-row">
+          <span>Day High / Low</span>
+          <span class="val">₹{{ stock.dayHigh | number:'1.2-2' }} / ₹{{ stock.dayLow | number:'1.2-2' }}</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Quantity</label>
+        <input type="number" [(ngModel)]="quantity" min="1"
+               [max]="tradeType === 'BUY' ? stock.availableShares : 99999"
+               placeholder="0" />
+        <span class="hint" *ngIf="tradeType === 'BUY' && quantity > stock.availableShares">
+          Max available: {{ stock.availableShares | number }}
+        </span>
+      </div>
+
+      <div class="total-row" *ngIf="quantity > 0">
+        <span>Total {{ tradeType === 'BUY' ? 'Cost' : 'Value' }}</span>
+        <span class="total-val">₹{{ (stock.currentPrice * quantity) | number:'1.2-2' }}</span>
+      </div>
+
+      <button class="btn-execute"
+              [class.sell]="tradeType === 'SELL'"
+              [class.soldout]="tradeType === 'BUY' && stock.availableShares === 0"
+              (click)="executeTrade()"
+              [disabled]="loading || quantity < 1 || (tradeType === 'BUY' && stock.availableShares === 0)">
+        <ng-container *ngIf="tradeType === 'BUY' && stock.availableShares === 0">
+          🚫 No Shares Available
+        </ng-container>
+        <ng-container *ngIf="!(tradeType === 'BUY' && stock.availableShares === 0)">
+          {{ loading ? 'Processing...' : (tradeType === 'BUY' ? '🛒 Buy ' + stock.symbol : '💰 Sell ' + stock.symbol) }}
+        </ng-container>
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="stats-grid">
+    <div class="stat-box">
+      <div class="s-label">Open</div>
+      <div class="s-val">₹{{ stock.openPrice | number:'1.2-2' }}</div>
+    </div>
+    <div class="stat-box">
+      <div class="s-label">Previous Close</div>
+      <div class="s-val">₹{{ stock.previousClose | number:'1.2-2' }}</div>
+    </div>
+    <div class="stat-box">
+      <div class="s-label">Day High</div>
+      <div class="s-val green">₹{{ stock.dayHigh | number:'1.2-2' }}</div>
+    </div>
+    <div class="stat-box">
+      <div class="s-label">Day Low</div>
+      <div class="s-val red">₹{{ stock.dayLow | number:'1.2-2' }}</div>
+    </div>
+    <div class="stat-box">
+      <div class="s-label">Total Shares</div>
+      <div class="s-val">{{ stock.totalShares | number }}</div>
+    </div>
+    <div class="stat-box">
+      <div class="s-label">Available Shares</div>
+      <div class="s-val" [class.red]="stock.availableShares === 0" [class.green]="stock.availableShares > 0">
+        {{ stock.availableShares | number }}
+      </div>
+    </div>
+  </div>
+</div>

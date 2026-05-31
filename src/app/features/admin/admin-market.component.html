@@ -1,0 +1,164 @@
+<div class="admin-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">🛡️ Admin</div>
+    <nav>
+      <a class="nav-link" routerLink="/admin">📊 Stocks</a>
+      <a class="nav-link active">🎮 Market Control</a>
+      <a class="nav-link" (click)="adminService.logout()">🚪 Logout</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+
+    <!-- Toast -->
+    <div class="toast" *ngIf="toastMessage"
+         [class.toast-error]="toastType==='error'"
+         [class.toast-success]="toastType==='success'">
+      <span>{{ toastType === 'error' ? '⚠️' : '✅' }}</span>
+      <span class="toast-text">{{ toastMessage }}</span>
+      <button (click)="toastMessage=''">✕</button>
+    </div>
+
+    <div class="page-header">
+      <h2>🎮 Market Control</h2>
+      <p class="subtitle">Simulate market conditions, events and volatility</p>
+    </div>
+
+    <!-- How it works banner -->
+    <div class="info-banner">
+      <span class="info-icon">💡</span>
+      <div>
+        <strong>How price simulation works:</strong>
+        Prices move based on <em>random noise + market sentiment + real user trade pressure + scarcity premium + events</em>.
+        When users buy heavily, the price nudges up. When shares run low, upward pressure increases.
+        You control sentiment and can fire one-time events that fade over time.
+      </div>
+    </div>
+
+    <div class="control-grid">
+
+      <!-- Global Sentiment -->
+      <div class="control-card">
+        <div class="card-header">
+          <h3>🌍 Global Market Sentiment</h3>
+          <span class="sentiment-badge" [class]="getSentimentClass()">{{ sentimentLabel }}</span>
+        </div>
+        <p class="card-desc">
+          Shifts all stocks in the same direction. Bull market = slight upward bias on every tick.
+        </p>
+        <div class="sentiment-slider-row">
+          <span class="slider-label red">Bear 🐻</span>
+          <input type="range" [(ngModel)]="sentimentValue"
+                 min="-1" max="1" step="0.1"
+                 class="sentiment-slider"
+                 (ngModelChange)="onSentimentChange()" />
+          <span class="slider-label green">Bull 🐂</span>
+        </div>
+        <div class="sentiment-value">{{ sentimentValue | number:'1.1-1' }}</div>
+        <div class="sentiment-presets">
+          <button *ngFor="let p of sentimentPresets"
+                  class="preset-btn"
+                  [class.active]="sentimentValue === p.value"
+                  (click)="applySentiment(p.value)">
+            {{ p.icon }} {{ p.label }}
+          </button>
+        </div>
+        <button class="btn-apply" (click)="submitSentiment()" [disabled]="saving">
+          {{ saving ? 'Applying...' : 'Apply Sentiment' }}
+        </button>
+      </div>
+
+      <!-- Market Events -->
+      <div class="control-card">
+        <div class="card-header">
+          <h3>📰 Trigger Market Event</h3>
+        </div>
+        <p class="card-desc">
+          Fire a one-time event on a specific stock. Impact fades over the set number of ticks (1 tick = 3 seconds).
+        </p>
+
+        <div class="form-group">
+          <label>Select Stock</label>
+          <select [(ngModel)]="selectedStockId" class="form-select">
+            <option value="">-- Choose stock --</option>
+            <option *ngFor="let s of stocks" [value]="s.id">
+              {{ s.symbol }} — {{ s.companyName }}
+            </option>
+          </select>
+        </div>
+
+        <div class="event-presets">
+          <div class="event-preset"
+               *ngFor="let e of eventPresets"
+               [class.selected]="selectedEvent?.name === e.name"
+               [class.event-green]="e.color === 'green'"
+               [class.event-red]="e.color === 'red'"
+               (click)="selectEvent(e)">
+            <span class="event-icon">{{ e.icon }}</span>
+            <span class="event-name">{{ e.name }}</span>
+            <span class="event-impact" [class.green]="e.impact > 0" [class.red]="e.impact < 0">
+              {{ e.impact > 0 ? '+' : '' }}{{ e.impact }}%
+            </span>
+          </div>
+        </div>
+
+        <div class="custom-event" *ngIf="selectedEvent">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Impact %</label>
+              <input type="number" [(ngModel)]="customImpact" step="0.5" />
+            </div>
+            <div class="form-group">
+              <label>Duration (ticks)</label>
+              <input type="number" [(ngModel)]="customTicks" min="1" max="50" />
+            </div>
+          </div>
+          <div class="event-preview">
+            {{ selectedEvent.icon }} <strong>{{ selectedEvent.name }}</strong>
+            will move price
+            <span [class.green]="customImpact > 0" [class.red]="customImpact < 0">
+              {{ customImpact > 0 ? '+' : '' }}{{ customImpact }}%
+            </span>
+            over {{ customTicks }} ticks (~{{ customTicks * 3 }}s)
+          </div>
+        </div>
+
+        <button class="btn-apply btn-event"
+                (click)="triggerEvent()"
+                [disabled]="saving || !selectedStockId || !selectedEvent">
+          🚀 Fire Event
+        </button>
+      </div>
+
+      <!-- Volatility Control -->
+      <div class="control-card full-width">
+        <div class="card-header">
+          <h3>📊 Per-Stock Volatility</h3>
+        </div>
+        <p class="card-desc">
+          Controls how much a stock's price swings per tick. High volatility = more dramatic moves.
+          Default is Medium (1.5%).
+        </p>
+        <div class="vol-grid">
+          <div class="vol-row" *ngFor="let s of stocks">
+            <span class="vol-symbol">{{ s.symbol }}</span>
+            <span class="vol-company">{{ s.companyName }}</span>
+            <div class="vol-presets">
+              <button *ngFor="let vp of volatilityPresets"
+                      class="vol-btn"
+                      [class.vol-active]="getVolatility(s.id) === vp.value"
+                      [class]="'vol-btn vol-' + vp.label.toLowerCase().replace(' ', '-')"
+                      (click)="setVolatility(s.id, vp.value)">
+                {{ vp.label }}
+              </button>
+            </div>
+            <span class="vol-current">{{ getVolatility(s.id) }}%</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
