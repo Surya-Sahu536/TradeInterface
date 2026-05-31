@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { SharedModule } from '../../shared/shared.module';
 import { StockDetailComponent } from './stock-detail.component';
+import { CommonModule } from '@angular/common';
 
 const routes: Routes = [
   //{ path: ':id', component: StockDetailComponent }
@@ -11,6 +12,6 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [],
-  imports: [SharedModule, FormsModule, MatSnackBarModule, RouterModule.forChild(routes)]
+  imports: [SharedModule, CommonModule, FormsModule, MatSnackBarModule, RouterModule.forChild(routes)]
 })
 export class StocksModule { }
