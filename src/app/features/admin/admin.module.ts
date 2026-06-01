@@ -5,6 +5,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { SharedModule } from '../../shared/shared.module';
 //import { AdminStocksComponent } from './admin-stocks.component';
 import { AdminMarketComponent } from './admin-market.component';
+import { AdminStocksComponent } from '../admin-stocks/admin-stocks.component';
 
 const routes: Routes = [
   //{ path: '',       component: AdminStocksComponent  },
@@ -13,7 +14,7 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [
-    //AdminStocksComponent, 
+    AdminStocksComponent, 
     AdminMarketComponent],
   imports: [SharedModule, FormsModule, MatSnackBarModule, RouterModule.forChild(routes)]
 })

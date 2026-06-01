@@ -9,7 +9,7 @@ interface AdminUser { email: string; role: string; token: string; }
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
-  private readonly API = 'http://localhost:5001/api/admin';
+  private readonly API = 'https://localhost:44329/api/admin';
   private adminSubject = new BehaviorSubject<AdminUser | null>(this.loadAdmin());
 
   constructor(private http: HttpClient, private router: Router) {}
@@ -45,6 +45,14 @@ export class AdminService {
 
   deleteStock(id: number) {
     return this.http.delete(`${this.API}/stocks/${id}`);
+  }
+
+  // admin.service.ts
+  issueShares(stockId: number, additionalShares: number) {
+    return this.http.post<{ message: string; totalShares: number; availableShares: number }>(
+      `${this.API}/market/stocks/${stockId}/issue-shares`,
+      { additionalShares, reason: 'Admin issued shares' }
+    );
   }
 
   private loadAdmin(): AdminUser | null {

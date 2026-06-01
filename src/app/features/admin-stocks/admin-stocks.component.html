@@ -1,1 +1,144 @@
-<p>admin-stocks works!</p>
+<div class="admin-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">🛡️ Admin</div>
+    <nav>
+      <a class="nav-link active" routerLink="/admin">📊 Stocks</a>
+      <a class="nav-link" routerLink="/admin/market">🎮 Market Control</a>
+      <a class="nav-link" (click)="adminService.logout()">🚪 Logout</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+
+    <div class="page-header">
+      <h2>Stock Management</h2>
+      <button class="btn-add" (click)="showForm = !showForm">
+        {{ showForm ? '✕ Cancel' : '+ Add Stock' }}
+      </button>
+    </div>
+
+    <!-- Add Stock Form -->
+    <div class="form-card" *ngIf="showForm">
+      <h3>Add New Stock</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Symbol *</label>
+          <input [(ngModel)]="newStock.symbol" placeholder="e.g. AAPL"
+            style="text-transform:uppercase" />
+        </div>
+        <div class="form-group">
+          <label>Company Name *</label>
+          <input [(ngModel)]="newStock.companyName" placeholder="e.g. Apple Inc." />
+        </div>
+        <div class="form-group">
+          <label>Sector *</label>
+          <select [(ngModel)]="newStock.sector">
+            <option value="">Select Sector</option>
+            <option *ngFor="let s of sectors" [value]="s">{{ s }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Initial Price (₹) *</label>
+          <input type="number" [(ngModel)]="newStock.initialPrice"
+            placeholder="0.00" min="0.01" step="0.01" />
+        </div>
+        <div class="form-group">
+          <label>Total Shares *</label>
+          <input type="number" [(ngModel)]="newStock.totalShares"
+            placeholder="e.g. 1000000" min="1" />
+        </div>
+      </div>
+      <button class="btn-submit" (click)="createStock()" [disabled]="saving">
+        {{ saving ? 'Adding...' : 'Add Stock' }}
+      </button>
+    </div>
+
+    <!-- Edit Stock Form -->
+    <div class="form-card edit" *ngIf="editingStock">
+      <h3>Edit: {{ editingStock.symbol }}</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Company Name</label>
+          <input [(ngModel)]="editForm.companyName" />
+        </div>
+        <div class="form-group">
+          <label>Sector</label>
+          <select [(ngModel)]="editForm.sector">
+            <option *ngFor="let s of sectors" [value]="s">{{ s }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Current Price (₹)</label>
+          <input type="number" [(ngModel)]="editForm.currentPrice"
+            min="0.01" step="0.01" />
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select [(ngModel)]="editForm.isActive">
+            <option [ngValue]="true">Active</option>
+            <option [ngValue]="false">Inactive</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-submit" (click)="updateStock()" [disabled]="saving">
+          {{ saving ? 'Saving...' : 'Save Changes' }}
+        </button>
+        <button class="btn-cancel" (click)="editingStock = null">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Stocks Table -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Company</th>
+            <th>Sector</th>
+            <th class="right">Initial Price</th>
+            <th class="right">Current Price</th>
+            <th class="right">Total Shares</th>
+            <th class="right">Available Shares</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th class="center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let stock of stocks">
+            <td><span class="sym">{{ stock.symbol }}</span></td>
+            <td>{{ stock.companyName }}</td>
+            <td><span class="sector">{{ stock.sector }}</span></td>
+            <td class="right mono">₹{{ stock.initialPrice | number:'1.2-2' }}</td>
+            <td class="right mono">₹{{ stock.currentPrice | number:'1.2-2' }}</td>
+            <td class="right mono">{{ stock.totalShares | number }}</td>
+            <td class="right">
+              <span [class]="getAvailClass(stock)">
+                {{ stock.availableShares | number }}
+              </span>
+            </td>
+            <td>
+              <span [class]="stock.isActive ? 'badge-active' : 'badge-inactive'">
+                {{ stock.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+            <td class="muted">{{ stock.createdAt | date:'dd MMM yyyy' }}</td>
+            <td class="center">
+              <button class="btn-edit" (click)="startEdit(stock)">Edit</button>
+              <button class="btn-delete" (click)="deleteStock(stock)">Deactivate</button>
+              <button class="btn-issue" (click)="issueShares(stock)">+ Shares</button>
+            </td>
+          </tr>
+          <tr *ngIf="!stocks.length">
+            <td colspan="10" class="empty-row">No stocks added yet.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>

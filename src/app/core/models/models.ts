@@ -71,6 +71,8 @@ export interface AdminStock {
   sector: string;
   initialPrice: number;
   currentPrice: number;
+  totalShares: number;        // ← add this
+  availableShares: number;    // ← add this
   isActive: boolean;
   createdAt: string;
 }
