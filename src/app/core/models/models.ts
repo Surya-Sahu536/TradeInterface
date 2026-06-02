@@ -69,10 +69,14 @@ export interface AdminStock {
   symbol: string;
   companyName: string;
   sector: string;
-  initialPrice: number;
-  currentPrice: number;
-  totalShares: number;        // ← add this
-  availableShares: number;    // ← add this
+  currentPrice: number;      // no initialPrice
+  openPrice: number;
+  dayHigh: number;
+  dayLow: number;
+  previousClose: number;
+  volume: number;
+  totalShares: number;
+  availableShares: number;
   isActive: boolean;
-  createdAt: string;
+  lastUpdated: string;       // no createdAt
 }

@@ -11,7 +11,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // Admin API calls use admin token
-    const token = req.url.includes(':5001') ? this.admin.token : this.auth.token;
+    const token = req.url.includes(':44329') ? this.admin.token : this.auth.token;
 
     if (token) {
       req = req.clone({

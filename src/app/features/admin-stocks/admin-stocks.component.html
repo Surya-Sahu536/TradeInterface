@@ -113,7 +113,7 @@
             <td><span class="sym">{{ stock.symbol }}</span></td>
             <td>{{ stock.companyName }}</td>
             <td><span class="sector">{{ stock.sector }}</span></td>
-            <td class="right mono">₹{{ stock.initialPrice | number:'1.2-2' }}</td>
+            <td class="right mono">₹{{ stock.currentPrice | number:'1.2-2' }}</td>
             <td class="right mono">₹{{ stock.currentPrice | number:'1.2-2' }}</td>
             <td class="right mono">{{ stock.totalShares | number }}</td>
             <td class="right">
@@ -126,7 +126,7 @@
                 {{ stock.isActive ? 'Active' : 'Inactive' }}
               </span>
             </td>
-            <td class="muted">{{ stock.createdAt | date:'dd MMM yyyy' }}</td>
+            <td class="muted">{{ stock.lastUpdated | date:'dd MMM yyyy' }}</td>
             <td class="center">
               <button class="btn-edit" (click)="startEdit(stock)">Edit</button>
               <button class="btn-delete" (click)="deleteStock(stock)">Deactivate</button>
