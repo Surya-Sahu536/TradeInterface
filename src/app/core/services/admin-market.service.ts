@@ -27,7 +27,7 @@ export const VOLATILITY_PRESETS = [
 
 @Injectable({ providedIn: 'root' })
 export class AdminMarketService {
-  private readonly API = 'http://localhost:44329/api/admin/market';
+  private readonly API = 'https://localhost:44329/api/admin/market';
 
   constructor(private http: HttpClient) {}
 

@@ -50,7 +50,7 @@ export class AdminService {
   // admin.service.ts
   issueShares(stockId: number, additionalShares: number) {
     return this.http.post<{ message: string; totalShares: number; availableShares: number }>(
-      `${this.API}/market/stocks/${stockId}/issue-shares`,
+      `${this.API}/stocks/${stockId}/issue-shares`,
       { additionalShares, reason: 'Admin issued shares' }
     );
   }

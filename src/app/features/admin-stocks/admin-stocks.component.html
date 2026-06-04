@@ -99,7 +99,6 @@
             <th>Symbol</th>
             <th>Company</th>
             <th>Sector</th>
-            <th class="right">Initial Price</th>
             <th class="right">Current Price</th>
             <th class="right">Total Shares</th>
             <th class="right">Available Shares</th>
@@ -113,7 +112,6 @@
             <td><span class="sym">{{ stock.symbol }}</span></td>
             <td>{{ stock.companyName }}</td>
             <td><span class="sector">{{ stock.sector }}</span></td>
-            <td class="right mono">₹{{ stock.currentPrice | number:'1.2-2' }}</td>
             <td class="right mono">₹{{ stock.currentPrice | number:'1.2-2' }}</td>
             <td class="right mono">{{ stock.totalShares | number }}</td>
             <td class="right">
