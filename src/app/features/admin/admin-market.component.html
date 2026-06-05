@@ -1,14 +1,7 @@
 <div class="admin-layout">
 
   <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="brand">🛡️ Admin</div>
-    <nav>
-      <a class="nav-link" routerLink="/admin">📊 Stocks</a>
-      <a class="nav-link active">🎮 Market Control</a>
-      <a class="nav-link" (click)="adminService.logout()">🚪 Logout</a>
-    </nav>
-  </aside>
+  <app-admin-navbar></app-admin-navbar>
 
   <main class="main">
 

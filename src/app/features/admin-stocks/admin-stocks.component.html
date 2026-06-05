@@ -1,16 +1,7 @@
 <div class="admin-layout">
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="brand">🛡️ Admin</div>
-    <nav>
-      <a class="nav-link active" routerLink="/admin">📊 Stocks</a>
-      <a class="nav-link" routerLink="/admin/market">🎮 Market Control</a>
-      <a class="nav-link" (click)="adminService.logout()">🚪 Logout</a>
-    </nav>
-  </aside>
+  <app-admin-navbar></app-admin-navbar>
 
-  <!-- Main Content -->
   <main class="main">
 
     <div class="page-header">
@@ -72,8 +63,7 @@
         </div>
         <div class="form-group">
           <label>Current Price (₹)</label>
-          <input type="number" [(ngModel)]="editForm.currentPrice"
-            min="0.01" step="0.01" />
+          <input type="number" [(ngModel)]="editForm.currentPrice" min="0.01" step="0.01" />
         </div>
         <div class="form-group">
           <label>Status</label>
@@ -92,7 +82,7 @@
     </div>
 
     <!-- Stocks Table -->
-    <div class="table-container">
+    <div class="table-wrap">
       <table>
         <thead>
           <tr>
@@ -101,9 +91,9 @@
             <th>Sector</th>
             <th class="right">Current Price</th>
             <th class="right">Total Shares</th>
-            <th class="right">Available Shares</th>
+            <th class="right">Available</th>
             <th>Status</th>
-            <th>Created</th>
+            <th>Updated</th>
             <th class="center">Actions</th>
           </tr>
         </thead>
@@ -115,9 +105,7 @@
             <td class="right mono">₹{{ stock.currentPrice | number:'1.2-2' }}</td>
             <td class="right mono">{{ stock.totalShares | number }}</td>
             <td class="right">
-              <span [class]="getAvailClass(stock)">
-                {{ stock.availableShares | number }}
-              </span>
+              <span [class]="getAvailClass(stock)">{{ stock.availableShares | number }}</span>
             </td>
             <td>
               <span [class]="stock.isActive ? 'badge-active' : 'badge-inactive'">
@@ -126,13 +114,15 @@
             </td>
             <td class="muted">{{ stock.lastUpdated | date:'dd MMM yyyy' }}</td>
             <td class="center">
-              <button class="btn-edit" (click)="startEdit(stock)">Edit</button>
-              <button class="btn-delete" (click)="deleteStock(stock)">Deactivate</button>
-              <button class="btn-issue" (click)="issueShares(stock)">+ Shares</button>
+              <div class="actions-col">
+                <button class="btn-edit"   (click)="startEdit(stock)">Edit</button>
+                <button class="btn-issue"  (click)="issueShares(stock)">+ Shares</button>
+                <button class="btn-delete" (click)="deleteStock(stock)">Deactivate</button>
+              </div>
             </td>
           </tr>
           <tr *ngIf="!stocks.length">
-            <td colspan="10" class="empty-row">No stocks added yet.</td>
+            <td colspan="9" class="empty-row">No stocks added yet.</td>
           </tr>
         </tbody>
       </table>

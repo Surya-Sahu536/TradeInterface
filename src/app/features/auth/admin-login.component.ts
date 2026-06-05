@@ -58,7 +58,7 @@ export class AdminLoginComponent {
   onLogin() {
     this.loading = true;
     this.admin.login(this.email, this.password).subscribe(
-      () => this.router.navigate(['/admin']),
+      () => this.router.navigate(['/admin/stocks']),
       err => {
         this.snack.open(err.error?.message || 'Login failed', 'Close', { duration: 3000 });
         this.loading = false;

@@ -19,6 +19,7 @@ const routes: Routes = [
   { path: 'stocks/:id', component: StockDetailComponent, canActivate: [AuthGuard] },
   //{ path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: 'auth', loadChildren: () => import('./features/auth/auth.module').then(m => m.AuthModule) },
+  { path: '', loadChildren: () => import('./features/auth/auth.module').then(m => m.AuthModule) },
   //{ path: 'dashboard', loadChildren: () => import('./features/dashboard/dashboard.module').then(m => m.DashboardModule), canActivate: [AuthGuard] },
   //{ path: 'stocks', loadChildren: () => import('./features/stocks/stocks.module').then(m => m.StocksModule), canActivate: [AuthGuard] },
   //{ path: 'portfolio', loadChildren: () => import('./features/portfolio/portfolio.module').then(m => m.PortfolioModule), canActivate: [AuthGuard] },

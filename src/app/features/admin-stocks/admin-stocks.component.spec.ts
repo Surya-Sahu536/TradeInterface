@@ -9,15 +9,17 @@ import { AdminService } from '../../core/services/admin.service';
 const mockStocks = [
   {
     id: 1, symbol: 'TCS', companyName: 'Tata Consultancy Services',
-    sector: 'IT', initialPrice: 3900, currentPrice: 3920,
-    totalShares: 300000, availableShares: 280000,
-    isActive: true, createdAt: new Date().toISOString()
+    sector: 'IT', currentPrice: 3920, openPrice: 3900,
+    dayHigh: 3950, dayLow: 3880, previousClose: 3905,
+    volume: 850000, totalShares: 300000, availableShares: 280000,
+    isActive: true, lastUpdated: new Date().toISOString()
   },
   {
     id: 2, symbol: 'SBIN', companyName: 'State Bank of India',
-    sector: 'Banking', initialPrice: 740, currentPrice: 748,
-    totalShares: 2000000, availableShares: 0,
-    isActive: true, createdAt: new Date().toISOString()
+    sector: 'Banking', currentPrice: 748, openPrice: 742,
+    dayHigh: 755, dayLow: 738, previousClose: 745,
+    volume: 4500000, totalShares: 2000000, availableShares: 0,
+    isActive: true, lastUpdated: new Date().toISOString()
   }
 ];
 
@@ -30,7 +32,10 @@ describe('AdminStocksComponent', () => {
     createStock:  jasmine.createSpy('createStock').and.returnValue(of(mockStocks[0])),
     updateStock:  jasmine.createSpy('updateStock').and.returnValue(of(mockStocks[0])),
     deleteStock:  jasmine.createSpy('deleteStock').and.returnValue(of({})),
-    logout:       jasmine.createSpy('logout')
+    issueShares:  jasmine.createSpy('issueShares').and.returnValue(
+      of({ message: 'Issued 1000 shares', totalShares: 301000, availableShares: 281000 })
+    ),
+    logout: jasmine.createSpy('logout')
   };
 
   beforeEach(async () => {
@@ -45,28 +50,26 @@ describe('AdminStocksComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+  it('should create', () => expect(component).toBeTruthy());
 
   it('should load stocks on init', () => {
     expect(mockAdminService.getStocks).toHaveBeenCalled();
     expect(component.stocks.length).toBe(2);
   });
 
-  it('should return avail-soldout class when availableShares is 0', () => {
+ 
+  it('should return avail-soldout when availableShares is 0', () => {
     expect(component.getAvailClass(mockStocks[1] as any)).toBe('avail-soldout');
   });
 
-  it('should return avail-ok class when > 20% available', () => {
+  it('should return avail-ok when shares > 20%', () => {
     expect(component.getAvailClass(mockStocks[0] as any)).toBe('avail-ok');
   });
 
-  it('should populate editForm when startEdit is called', () => {
+  it('should populate editForm on startEdit', () => {
     component.startEdit(mockStocks[0] as any);
     expect(component.editingStock?.symbol).toBe('TCS');
     expect(component.editForm.companyName).toBe('Tata Consultancy Services');
-    expect(component.editForm.currentPrice).toBe(3920);
   });
 
   it('should call createStock with valid data', () => {

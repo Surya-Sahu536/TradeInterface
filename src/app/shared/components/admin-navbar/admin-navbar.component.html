@@ -1,0 +1,49 @@
+<aside class="admin-sidebar" [class.expanded]="isExpanded">
+
+  <!-- Header: hamburger + Admin label -->
+  <div class="sidebar-header">
+    <button class="hamburger" (click)="toggle()" title="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <span class="sidebar-title">Admin</span>
+  </div>
+
+  <!-- Nav links -->
+  <nav class="nav-items">
+
+    <a routerLink="/admin/stocks"
+       class="nav-item"
+       [class.active]="isActive('/admin/stocks')"
+       (click)="onNavClick()">
+      <span class="nav-icon">📊</span>
+      <span class="nav-label">Stocks</span>
+      <!-- Tooltip shown on hover when collapsed -->
+      <span class="nav-tooltip">Stocks</span>
+    </a>
+
+    <a routerLink="/admin/market"
+       class="nav-item"
+       [class.active]="isActive('/admin/market')"
+       (click)="onNavClick()">
+      <span class="nav-icon">🎮</span>
+      <span class="nav-label">Market Control</span>
+      <span class="nav-tooltip">Market Control</span>
+    </a>
+
+    <a class="nav-item logout-item" (click)="logout()">
+      <span class="nav-icon">🚪</span>
+      <span class="nav-label">Logout</span>
+      <span class="nav-tooltip">Logout</span>
+    </a>
+
+  </nav>
+
+</aside>
+
+<!-- Backdrop — closes sidebar on outside click when expanded -->
+<div class="sidebar-backdrop"
+     *ngIf="isExpanded"
+     (click)="collapse()">
+</div>
