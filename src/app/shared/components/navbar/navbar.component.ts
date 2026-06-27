@@ -1,5 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
+import { ThemeService } from '../../../core/services/theme.service';
 
 @Component({
   selector: 'app-navbar',
@@ -9,19 +10,25 @@ import { AuthService } from '../../../core/services/auth.service';
 export class NavbarComponent {
   menuOpen = false;
 
-  constructor(public auth: AuthService) {}
+  constructor(
+    public auth: AuthService,
+    public theme: ThemeService
+  ) {}
 
-  toggleMenu() { this.menuOpen = !this.menuOpen; }
-  closeMenu()  { this.menuOpen = false; }
-
-  // Close dropdown when clicking outside
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent) {
-    const target = event.target as HTMLElement;
-    if (!target.closest('.profile-menu')) {
-      this.menuOpen = false;
-    }
+  toggleMenu(event: MouseEvent) {
+    event.stopPropagation();
+    this.menuOpen = !this.menuOpen;
   }
+
+  closeMenu() { this.menuOpen = false; }
+
+  toggleTheme(event: MouseEvent) {
+    event.stopPropagation(); // prevent dropdown from closing
+    this.theme.toggle();
+  }
+
+  @HostListener('document:click')
+  onDocumentClick() { this.menuOpen = false; }
 
   getInitials(): string {
     const name = this.auth.currentUser?.fullName ?? '';

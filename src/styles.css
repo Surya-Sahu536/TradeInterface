@@ -1,1 +1,113 @@
-/* You can add global styles to this file, and also import other style files */
+/* ═══════════════════════════════════════════════════════════════
+   TradeCenter — Global Styles
+   Dark mode is the default (app was designed dark-first)
+   Light mode is opt-in via .light-mode on body
+═══════════════════════════════════════════════════════════════ */
+
+/* ── CSS Variables — Dark Mode (default) ───────────────────── */
+:root,
+body.dark-mode {
+  --bg-root:       #0a0e1a;
+  --bg-card:       #0f1629;
+  --bg-card-alt:   #1a2540;
+  --bg-header:     #0f1629;
+  --border-color:  #1e2d4a;
+  --border-muted:  #2a3a5c;
+
+  --text-primary:  #e0e6f0;
+  --text-secondary:#c8d3e6;
+  --text-muted:    #6b7a99;
+  --text-faint:    #4a5568;
+
+  --accent-green:  #00d4aa;
+  --accent-red:    #f56565;
+  --accent-purple: #7c3aed;
+  --accent-orange: #f6ad55;
+
+  --input-bg:      #1a2540;
+  --input-border:  #2a3a5c;
+  --input-text:    #e0e6f0;
+
+  --table-header:  #1a2540;
+  --table-row-hover: rgba(0,212,170,0.03);
+  --table-divider: #111827;
+
+  --shadow:        0 4px 20px rgba(0,0,0,0.5);
+}
+
+/* ── CSS Variables — Light Mode ─────────────────────────────── */
+body.light-mode {
+  --bg-root:       #f0f4f8;
+  --bg-card:       #ffffff;
+  --bg-card-alt:   #f7f9fc;
+  --bg-header:     #1a1f36;
+  --border-color:  #d1dce8;
+  --border-muted:  #c5d0dc;
+
+  --text-primary:  #1a202c;
+  --text-secondary:#2d3748;
+  --text-muted:    #718096;
+  --text-faint:    #a0aec0;
+
+  --accent-green:  #00a884;
+  --accent-red:    #e53e3e;
+  --accent-purple: #6b21a8;
+  --accent-orange: #dd6b20;
+
+  --input-bg:      #ffffff;
+  --input-border:  #cbd5e0;
+  --input-text:    #2d3748;
+
+  --table-header:  #edf2f7;
+  --table-row-hover: rgba(0,168,132,0.04);
+  --table-divider: #e2e8f0;
+
+  --shadow:        0 2px 12px rgba(0,0,0,0.08);
+}
+
+/* ── Base reset ─────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg-root);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-root); }
+::-webkit-scrollbar-thumb { background: var(--border-muted); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ── Selection ──────────────────────────────────────────────── */
+::selection { background: rgba(0,212,170,0.2); color: var(--text-primary); }
+
+/* ── Links ──────────────────────────────────────────────────── */
+a { color: var(--accent-green); }
+
+/* ── Input base ─────────────────────────────────────────────── */
+input, select, button, textarea { font-family: inherit; }
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+/* ── Material snackbar ──────────────────────────────────────── */
+.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: var(--bg-card-alt) !important;
+  --mdc-snackbar-supporting-text-color: var(--text-primary) !important;
+  border: 1px solid var(--border-muted);
+  border-radius: 8px !important;
+}
+
+/* ── Utility ────────────────────────────────────────────────── */
+.text-green { color: var(--accent-green); }
+.text-red   { color: var(--accent-red); }
+.text-muted { color: var(--text-muted); }
+.mono       { font-family: 'Courier New', monospace; }

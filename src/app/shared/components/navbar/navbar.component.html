@@ -5,8 +5,8 @@
   </div>
 
   <div class="nav-links">
-    <a routerLink="/dashboard"  routerLinkActive="active">Market</a>
-    <a routerLink="/portfolio"  routerLinkActive="active">Portfolio</a>
+    <a routerLink="/dashboard" routerLinkActive="active">Market</a>
+    <a routerLink="/portfolio" routerLinkActive="active">Portfolio</a>
   </div>
 
   <div class="nav-right">
@@ -16,27 +16,43 @@
     </a>
 
     <!-- Profile dropdown -->
-    <div class="profile-menu" (click)="toggleMenu()" (clickOutside)="closeMenu()">
+    <div class="profile-menu" (click)="toggleMenu($event)">
       <button class="avatar-btn" title="Profile">
         <span class="avatar-initials">{{ getInitials() }}</span>
       </button>
 
       <div class="dropdown" *ngIf="menuOpen">
+
         <div class="dropdown-header">
           <div class="dh-name">{{ auth.currentUser?.fullName }}</div>
           <div class="dh-email">{{ auth.currentUser?.email }}</div>
         </div>
+
         <div class="dropdown-divider"></div>
-        <a routerLink="/profile" class="dropdown-item" (click)="closeMenu()">
+
+        <a routerLink="/profile"   class="dropdown-item" (click)="closeMenu()">
           <span>👤</span> My Profile
         </a>
-        <a routerLink="/wallet" class="dropdown-item" (click)="closeMenu()">
+        <a routerLink="/wallet"    class="dropdown-item" (click)="closeMenu()">
           <span>💰</span> Wallet
         </a>
         <a routerLink="/portfolio" class="dropdown-item" (click)="closeMenu()">
           <span>📊</span> Portfolio
         </a>
+
         <div class="dropdown-divider"></div>
+
+        <!-- Dark / Light mode toggle -->
+        <div class="dropdown-item theme-toggle" (click)="toggleTheme($event)">
+          <span>{{ theme.isDark ? '☀️' : '🌙' }}</span>
+          <span class="theme-label">{{ theme.isDark ? 'Light Mode' : 'Dark Mode' }}</span>
+          <div class="toggle-switch" [class.on]="theme.isDark">
+            <div class="toggle-knob"></div>
+          </div>
+        </div>
+
+        <div class="dropdown-divider"></div>
+
         <a class="dropdown-item logout-item" (click)="auth.logout()">
           <span>🚪</span> Sign Out
         </a>
